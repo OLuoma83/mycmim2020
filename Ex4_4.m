@@ -1,23 +1,34 @@
 close all;
+clear;
+clc;
+
 f = @(u, t) 0.1*(1 - u/500)*u;
 U_0 = 100;
 
-dt = 0.5; T = 60;
-[u, t] = ode_FE(f, U_0, dt, T);
-plot(t, u, 'b-');
-xlabel('t'); ylabel('N(t)');
-figure;
-%filestem = strcat('tmp_',num2str(dt));
+expression = 1;
+k = 0;
 
-% Note: this print statement gets a problem with the decimal point
-%print(filestem,?-dpng?); print(filestem,?-dpdf?);
-% so we rather do it like this:
-%filename = strcat(filestem, '.png'); print(filename);
-%filename = strcat(filestem, '.pdf'); print(filename);
+while expression == 1
+    
+    close all;
+   
+    dt = 60; T = 100;
+    dtk = 2^k * dt;
+    [u, t] = ode_FE(f, U_0, dtk, T);
+    plot(t, u, 'r-');
+    hold on;
 
-dt = 20; T = 100;
-[u, t] = ode_FE(f, U_0, dt, T);
-plot(t, u, 'b-');
-xlabel('t'); ylabel('N(t)');
-filestem = strcat('tmp_',num2str(dt));
-print(filestem, '-dpng'); print(filestem, '-dpdf');
+    dt = 60; T = 100;
+    dtk = 2^(k-1) * dt;
+    [u, t] = ode_FE(f, U_0, dtk, T);
+    plot(t, u, 'b-');
+    xlabel('t'); ylabel('N(t)');
+    legend('dtk-1', 'dtk', 'Location', 'southeast');
+    
+    fprintf('dtk value is: %g\n', dtk);
+    expression = input('Smaller dtk? (Yes = 1/No = 0):');
+    
+    k = k - 1;
+    
+end
+
